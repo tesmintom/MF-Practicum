@@ -307,7 +307,7 @@ a:focus-visible {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   background: var(--color-background);
   color: var(--color-text);
-  border-top: 0.0625rem solid var(--color-border);
+  border-top: 1px solid var(--color-border);
   scroll-margin-top: 2rem;
 }
 
@@ -340,7 +340,7 @@ a:focus-visible {
   content: "";
   flex: 1;
   max-width: 14rem;
-  height: 0.0625rem;
+  height: 1px;
   background: var(--color-border);
 }
 
@@ -374,7 +374,7 @@ a:focus-visible {
   display: block;
   min-height: 32rem;
   background: var(--color-background);
-  border-block: 0.0625rem solid var(--color-border);
+  border-block: 1px solid var(--color-border);
   scroll-margin-top: 2rem;
 }
 
