@@ -1,0 +1,34 @@
+:root {
+  --color-background: #101110;
+  --color-heading: #f4f0e8;
+  --color-text: #d0cec8;
+  --color-gold: #d8b781;
+  --color-gold-hover: #ead1a8;
+  --color-border: #494131;
+  --color-button-text: #171511;
+  --color-overlay-dark: rgb(10 11 10 / 90%);
+  --color-overlay-light: rgb(10 11 10 / 15%);
+
+  --container-width: 75rem;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding:0;
+  margin:0;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
