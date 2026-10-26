@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Header from './components/Header'
+import Hero from './components/Hero'
 import './index.css'
 
 function App() {
@@ -8,6 +9,7 @@ function App() {
 <Header />
 
       <main>
+        <Hero />
         {/* Add your Hero, Menu, OurStory and Reservations components here */}
       </main>
     </>

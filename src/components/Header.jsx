@@ -12,7 +12,7 @@ function Header() {
         <a
           href="#home"
           className="logo shrink-0"
-          aria-label="BrewHaus home"
+          aria-label="Cait home"
           onClick={closeMenu}
         >
           Cait<span>Restaurant</span>
