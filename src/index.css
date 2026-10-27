@@ -449,6 +449,72 @@ a:focus-visible {
     font-size: 1rem;
 }
 
+
+/* Menu category filters */
+.menu-filters {
+  margin: 2rem 0;
+}
+
+.menu-filter {
+  padding: 0.65rem 1.25rem;
+  border: 1px solid #494131;
+  background: transparent;
+  color: #d0cec8;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.menu-filter:hover,
+.menu-filter.active {
+  border-color: #d8b781;
+  background: #d8b781;
+  color: #171511;
+}
+
+.menu-filter:focus-visible,
+.quantity-button:focus-visible {
+  outline: 2px solid #d8b781;
+  outline-offset: 3px;
+}
+
+/* Quantity stepper */
+.quantity-stepper {
+  margin-top: 0.75rem;
+}
+
+.quantity-button {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #494131;
+  background: transparent;
+  color: #d8b781;
+  cursor: pointer;
+}
+
+.quantity-button:hover:not(:disabled) {
+  background: #d8b781;
+  color: #171511;
+}
+
+.quantity-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.quantity-value {
+  min-width: 1.25rem;
+  color: #f4f0e8;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+
 /* Phone */
 @media (max-width: 640px) {
   .food-menu {

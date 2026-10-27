@@ -1,7 +1,33 @@
 
+import { useState } from 'react'
 import menuData from '../data/foodmenu.json'
+import QuantityStepper from './QuantityStepper'
+
+const filters = [
+  { label: 'All', value: 'all' },
+  { label: 'Starters', value: 'starters' },
+  { label: 'Mains', value: 'mains' },
+  { label: 'Desserts', value: 'desserts' },
+]
 
 function Menu() {
+  const [activeFilter, setActiveFilter] = useState('all')
+  const [quantities, setQuantities] = useState({})
+
+  const visibleCategories =
+    activeFilter === 'all'
+      ? menuData.categories
+      : menuData.categories.filter(
+          (category) => category.id === activeFilter
+        )
+
+  function updateQuantity(itemId, newQuantity) {
+    setQuantities((previousQuantities) => ({
+      ...previousQuantities,
+      [itemId]: Math.max(0, newQuantity),
+    }))
+  }
+
   return (
     <section
       className="food-menu mx-auto w-full px-5 sm:px-8 lg:px-10"
@@ -20,8 +46,30 @@ function Menu() {
           </p>
         </header>
 
+        {/* Category filters */}
+        <div
+          className="menu-filters flex flex-wrap justify-center gap-3"
+          role="group"
+          aria-label="Filter menu by category"
+        >
+          {filters.map((filter) => (
+            <button
+              key={filter.value}
+              type="button"
+              className={`menu-filter ${
+                activeFilter === filter.value ? 'active' : ''
+              }`}
+              aria-pressed={activeFilter === filter.value}
+              onClick={() => setActiveFilter(filter.value)}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Filtered menu categories */}
         <div className="menu-grid">
-          {menuData.categories.map((category) => (
+          {visibleCategories.map((category) => (
             <section
               className="menu-category"
               key={category.id}
@@ -30,19 +78,30 @@ function Menu() {
               <h3 id={category.titleId}>{category.name}</h3>
 
               <ul className="menu-list" role="list">
-                {category.items.map((item) => (
-                  <li className="menu-item" key={item.id}>
-                    <div className="menu-item-heading">
-                      <h4>{item.name}</h4>
+                {category.items.map((item) => {
+                  const quantity = quantities[item.id] ?? 0
 
-                      <span className="menu-price">
-                        AED {item.price}
-                      </span>
-                    </div>
+                  return (
+                    <li className="menu-item" key={item.id}>
+                      <div className="menu-item-heading">
+                        <h4>{item.name}</h4>
 
-                    <p>{item.description}</p>
-                  </li>
-                ))}
+                        <span className="menu-price">
+                          AED {item.price}
+                        </span>
+                      </div>
+
+                      <p>{item.description}</p>
+
+                      <QuantityStepper
+                        quantity={quantity}
+                        onChange={(newQuantity) =>
+                          updateQuantity(item.id, newQuantity)
+                        }
+                      />
+                    </li>
+                  )
+                })}
               </ul>
             </section>
           ))}
