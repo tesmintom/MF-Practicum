@@ -3,44 +3,48 @@ import menuData from '../data/foodmenu.json'
 
 function Menu() {
   return (
-    <section id="menu" className="menu-section">
-      <div className="container menu-inner mx-auto w-full max-w-[1200px] px-5 py-16 sm:px-8 sm:py-20 lg:px-10">
-        <div className="menu-header">
-          <p className="section-eyebrow">Discover Our Menu</p>
-          <h2 className="section-title">A Taste of Excellence</h2>
-          <p className="section-description">
-            Thoughtfully sourced ingredients, seasonal flavours,
-            and dishes crafted to be savoured.
+    <section
+      className="food-menu mx-auto w-full px-5 sm:px-8 lg:px-10"
+      id="menu"
+      aria-labelledby="menu-title"
+    >
+      <div className="container">
+        <header className="menu-heading">
+          <p className="menu-eyebrow">Seasonal cuisine</p>
+
+          <h2 id="menu-title">The Menu</h2>
+
+          <p className="menu-intro">
+            A modern interpretation of classic flavours,
+            inspired by the world around us.
           </p>
-        </div>
+        </header>
 
-        <div className="menu-grid grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
+        <div className="menu-grid">
           {menuData.categories.map((category) => (
-            <div className="menu-category" key={category.id}>
-              <h3 className="menu-category-title">
-                {category.name}
-              </h3>
+            <section
+              className="menu-category"
+              key={category.id}
+              aria-labelledby={category.titleId}
+            >
+              <h3 id={category.titleId}>{category.name}</h3>
 
-              <div className="menu-items">
+              <ul className="menu-list" role="list">
                 {category.items.map((item) => (
-                  <article className="menu-item" key={item.id}>
-                    <div className="menu-item-header flex items-start justify-between gap-4">
-                      <h4 className="menu-item-name">
-                        {item.name}
-                      </h4>
+                  <li className="menu-item" key={item.id}>
+                    <div className="menu-item-heading">
+                      <h4>{item.name}</h4>
 
-                      <span className="menu-item-price shrink-0">
+                      <span className="menu-price">
                         AED {item.price}
                       </span>
                     </div>
 
-                    <p className="menu-item-description">
-                      {item.description}
-                    </p>
-                  </article>
+                    <p>{item.description}</p>
+                  </li>
                 ))}
-              </div>
-            </div>
+              </ul>
+            </section>
           ))}
         </div>
       </div>
