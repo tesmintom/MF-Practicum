@@ -1,0 +1,77 @@
+
+{
+  "categories": [
+    {
+      "id": "starters",
+      "name": "Starters",
+      "items": [
+        {
+          "id": "burrata-di-stagione",
+          "name": "Burrata di Stagione",
+          "description": "Heirloom tomatoes, basil, olive oil, aged balsamic.",
+          "price": 68
+        },
+        {
+          "id": "yellowfin-tuna-crudo",
+          "name": "Yellowfin Tuna Crudo",
+          "description": "Citrus, avocado, sesame, yuzu ponzu.",
+          "price": 72
+        },
+        {
+          "id": "wild-mushroom-arancini",
+          "name": "Wild Mushroom Arancini",
+          "description": "Black truffle, parmesan, chive emulsion.",
+          "price": 64
+        }
+      ]
+    },
+    {
+      "id": "mains",
+      "name": "Mains",
+      "items": [
+        {
+          "id": "wagyu-tenderloin",
+          "name": "Wagyu Tenderloin",
+          "description": "Charcoal grilled, celeriac purée, seasonal greens.",
+          "price": 185
+        },
+        {
+          "id": "black-cod-miso",
+          "name": "Black Cod Miso",
+          "description": "Roasted baby vegetables, dashi beurre blanc.",
+          "price": 165
+        },
+        {
+          "id": "handmade-tagliatelle",
+          "name": "Handmade Tagliatelle",
+          "description": "Truffle cream, wild mushrooms, aged parmesan.",
+          "price": 140
+        }
+      ]
+    },
+    {
+      "id": "desserts",
+      "name": "Desserts",
+      "items": [
+        {
+          "id": "chocolate-fondant",
+          "name": "Chocolate Fondant",
+          "description": "Hazelnut praline, vanilla ice cream.",
+          "price": 58
+        },
+        {
+          "id": "citrus-panna-cotta",
+          "name": "Citrus Panna Cotta",
+          "description": "Blood orange, pistachio, thyme.",
+          "price": 54
+        },
+        {
+          "id": "date-and-coffee-tiramisu",
+          "name": "Date and Coffee Tiramisu",
+          "description": "Mascarpone, Arabic coffee, cacao.",
+          "price": 56
+        }
+      ]
+    }
+  ]
+}
