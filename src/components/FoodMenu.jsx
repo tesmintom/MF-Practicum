@@ -1,6 +1,5 @@
-
-import { useState } from 'react'
-import menuData from '../data/foodmenu.json'
+import { useEffect, useState } from 'react'
+import { apiRequest } from '../api'
 import QuantityStepper from './QuantityStepper'
 
 const filters = [
@@ -13,13 +12,32 @@ const filters = [
 function Menu() {
   const [activeFilter, setActiveFilter] = useState('all')
   const [quantities, setQuantities] = useState({})
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let active = true
+    apiRequest('/api/menu')
+      .then(({ categories: menuCategories }) => {
+        if (active) setCategories(menuCategories)
+      })
+      .catch((requestError) => {
+        if (active) setError(requestError.message)
+      })
+      .finally(() => {
+        if (active) setLoading(false)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [])
 
   const visibleCategories =
     activeFilter === 'all'
-      ? menuData.categories
-      : menuData.categories.filter(
-          (category) => category.id === activeFilter
-        )
+      ? categories
+      : categories.filter((category) => category.id === activeFilter)
 
   function updateQuantity(itemId, newQuantity) {
     setQuantities((previousQuantities) => ({
@@ -46,7 +64,6 @@ function Menu() {
           </p>
         </header>
 
-        {/* Category filters */}
         <div
           className="menu-filters flex flex-wrap justify-center gap-3"
           role="group"
@@ -67,45 +84,60 @@ function Menu() {
           ))}
         </div>
 
-        {/* Filtered menu categories */}
-        <div className="menu-grid">
-          {visibleCategories.map((category) => (
-            <section
-              className="menu-category"
-              key={category.id}
-              aria-labelledby={category.titleId}
-            >
-              <h3 id={category.titleId}>{category.name}</h3>
+        {loading && <p role="status">Loading the menu...</p>}
+        {error && (
+          <p className="menu-error" role="alert">
+            We couldn’t load the menu. {error}
+          </p>
+        )}
+        {!loading && !error && categories.length === 0 && (
+          <p role="status">The menu is not available yet.</p>
+        )}
 
-              <ul className="menu-list" role="list">
-                {category.items.map((item) => {
-                  const quantity = quantities[item.id] ?? 0
+        {!loading && !error && (
+          <div className="menu-grid">
+            {visibleCategories.map((category) => {
+              const titleId = `${category.id}-title`
 
-                  return (
-                    <li className="menu-item" key={item.id}>
-                      <div className="menu-item-heading">
-                        <h4>{item.name}</h4>
+              return (
+                <section
+                  className="menu-category"
+                  key={category.id}
+                  aria-labelledby={titleId}
+                >
+                  <h3 id={titleId}>{category.name}</h3>
 
-                        <span className="menu-price">
-                          AED {item.price}
-                        </span>
-                      </div>
+                  <ul className="menu-list" role="list">
+                    {category.items.map((item) => {
+                      const quantity = quantities[item.id] ?? 0
 
-                      <p>{item.description}</p>
+                      return (
+                        <li className="menu-item" key={item.id}>
+                          <div className="menu-item-heading">
+                            <h4>{item.name}</h4>
 
-                      <QuantityStepper
-                        quantity={quantity}
-                        onChange={(newQuantity) =>
-                          updateQuantity(item.id, newQuantity)
-                        }
-                      />
-                    </li>
-                  )
-                })}
-              </ul>
-            </section>
-          ))}
-        </div>
+                            <span className="menu-price">
+                              AED {item.price}
+                            </span>
+                          </div>
+
+                          <p>{item.description}</p>
+
+                          <QuantityStepper
+                            quantity={quantity}
+                            onChange={(newQuantity) =>
+                              updateQuantity(item.id, newQuantity)
+                            }
+                          />
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </section>
+              )
+            })}
+          </div>
+        )}
       </div>
     </section>
   )

@@ -1,10 +1,55 @@
-
 import { useState } from 'react'
+import { apiRequest } from '../api'
 
-function Header() {
+function Header({ user, onSessionChange }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [authMode, setAuthMode] = useState(null)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [authError, setAuthError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   const closeMenu = () => setMenuOpen(false)
+
+  async function submitAuth(event) {
+    event.preventDefault()
+    setAuthError('')
+    setSubmitting(true)
+
+    try {
+      const { user: signedInUser } = await apiRequest(
+        `/api/auth/${authMode}`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ email, password }),
+        },
+      )
+      onSessionChange(signedInUser)
+      setAuthMode(null)
+      setEmail('')
+      setPassword('')
+    } catch (error) {
+      setAuthError(error.message)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  async function signOut() {
+    setAuthError('')
+    try {
+      await apiRequest('/api/auth/logout', { method: 'POST' })
+      onSessionChange(null)
+    } catch (error) {
+      setAuthError(error.message)
+    }
+  }
+
+  function openAuth(mode) {
+    setAuthError('')
+    setAuthMode(mode)
+    closeMenu()
+  }
 
   return (
     <header id="home" className="site-header">
@@ -72,8 +117,103 @@ function Header() {
           >
             Reserve a Table
           </a>
+
+          {user ? (
+            <div className="account-controls">
+              <span className="account-email">{user.email}</span>
+              <button type="button" className="account-action" onClick={signOut}>
+                Sign out
+              </button>
+            </div>
+          ) : (
+            <div className="account-controls">
+              <button
+                type="button"
+                className="account-action"
+                onClick={() => openAuth('login')}
+              >
+                Sign in
+              </button>
+              <button
+                type="button"
+                className="account-action"
+                onClick={() => openAuth('signup')}
+              >
+                Sign up
+              </button>
+            </div>
+          )}
         </nav>
       </div>
+
+      {authMode && (
+        <div className="auth-backdrop" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setAuthMode(null)
+        }}>
+          <section
+            className="auth-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="auth-title"
+          >
+            <button
+              type="button"
+              className="auth-close"
+              aria-label="Close sign-in dialog"
+              onClick={() => setAuthMode(null)}
+            >
+              ×
+            </button>
+            <p className="menu-eyebrow">Cait Restaurant</p>
+            <h2 id="auth-title">
+              {authMode === 'signup' ? 'Create your account' : 'Welcome back'}
+            </h2>
+            <form className="auth-form" onSubmit={submitAuth}>
+              <label htmlFor="auth-email">Email address</label>
+              <input
+                id="auth-email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+              />
+              <label htmlFor="auth-password">Password</label>
+              <input
+                id="auth-password"
+                type="password"
+                autoComplete={authMode === 'signup' ? 'new-password' : 'current-password'}
+                minLength={authMode === 'signup' ? 8 : undefined}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+              />
+              {authError && <p className="auth-error" role="alert">{authError}</p>}
+              <button
+                className="button button-primary"
+                type="submit"
+                disabled={submitting}
+              >
+                {submitting
+                  ? 'Please wait...'
+                  : authMode === 'signup'
+                    ? 'Create account'
+                    : 'Sign in'}
+              </button>
+            </form>
+            <p className="auth-switch">
+              {authMode === 'signup' ? 'Already have an account?' : 'New to Cait?'}{' '}
+              <button
+                type="button"
+                onClick={() => openAuth(authMode === 'signup' ? 'login' : 'signup')}
+              >
+                {authMode === 'signup' ? 'Sign in' : 'Create an account'}
+              </button>
+            </p>
+          </section>
+        </div>
+      )}
+      {authError && !authMode && <p className="auth-toast" role="alert">{authError}</p>}
     </header>
   )
 }

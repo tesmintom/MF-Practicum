@@ -1,97 +1,68 @@
-# Cait Restaurant Website
+# Cait Restaurant
 
-A modern, elegant restaurant website concept for **Cait Restaurant**, showcasing seasonal cuisine, a refined dining experience, and table reservations in Dubai.
+A React and Vite restaurant website with a PostgreSQL-backed menu, an Express API, and email/password signup, login, and persistent sessions.
 
-## Overview
+## Requirements
 
-This project is a responsive restaurant website designed to provide visitors with an elegant and user-friendly browsing experience. It features a hero section, curated food menu, restaurant story, and reservation information.
+- Node.js 20.19+ (or 22.12+) and npm
+- A PostgreSQL database (for example, a free Neon project)
 
-The project is being developed as a learning exercise to transition from a traditional HTML, CSS, and JavaScript website to a modern React application styled with Tailwind CSS.
+## Local development
 
-## Features
+1. Create a PostgreSQL database and copy its connection URL.
+2. Create `server/.env` from `server/.env.example`. Set `DATABASE_URL` and a private `SESSION_SECRET` of at least 32 characters. For example, generate one with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
+3. Keep the `.env` files local; they are ignored by Git.
+4. Install and seed the server:
 
-- **Hero Section** — Restaurant introduction with a prominent reservation call to action.
-- **Food Menu** — Starters, main courses, and desserts with descriptions and prices in AED.
-- **Our Story** — An introduction to the restaurant's philosophy and dining experience.
-- **Reservations** — Email-based reservation requests.
-- **Responsive Design** — A layout intended to work across desktop, tablet, and mobile devices.
-- **Accessible Markup** — Semantic HTML, descriptive image alternatives, and accessible navigation.
-
-## Tech Stack
-
-### Current Implementation
-- HTML5
-- CSS3
-- JavaScript
-- Git and GitHub
-
-### Planned Migration
-- React
-- Tailwind CSS
-- Vite
-
-## Project Structure
-
-```text
-MF-Practicum/
-├── css/                 # Stylesheets
-├── images/              # Restaurant images and visual assets
-├── js/                  # JavaScript files
-├── index.html           # Current website entry point
-└── README.md
-```
-
-The project structure will be updated as the React migration progresses.
-
-## Getting Started
-
-### Prerequisites
-
-- A modern web browser
-- Visual Studio Code (recommended)
-- Node.js and npm (for the React migration)
-
-### Run the Current HTML Website
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/tesmintom/MF-Practicum.git
+   ```sh
+   cd server
+   npm install
+   npm run seed
    ```
 
-2. Open the project folder:
+   The seed script creates the schema and loads the menu from `src/data/foodmenu.json`. It can be run again safely.
+5. In another terminal, start the API and frontend:
 
-   ```bash
-   cd MF-Practicum
+   ```sh
+   cd server
+   npm run dev
    ```
 
-3. Open `index.html` in your browser, or use the Live Server extension in Visual Studio Code.
+   ```sh
+   npm install
+   npm run dev
+   ```
 
-### React Development
+   The Vite development server proxies `/api` to `http://localhost:5000`. The API creates any missing tables at startup. The menu is available at `GET /api/menu`; authentication is provided by `/api/auth/signup`, `/api/auth/login`, `/api/auth/session`, and `/api/auth/logout`.
 
-After the React and Tailwind CSS setup is complete, install the project dependencies and start the development server:
+The root `.env.example` documents `VITE_API_URL`. Leave it blank for the local Vite proxy. Set it to the API base URL only when the production frontend can send credentials to that API (see deployment notes).
 
-```bash
-npm install
-npm run dev
-```
+## Deployment
 
-Open the local URL displayed in the terminal.
+The repository is arranged for separate frontend and backend deployments. The cloud accounts, database, and service URLs must be created by the project owner; no deployment credentials or hosted database URL are stored in this repository.
 
-## Future Improvements
+### PostgreSQL
 
-- Complete the migration to React and Tailwind CSS.
-- Build reusable components for the header, hero, menu, story, reservations, and footer.
-- Improve responsive layouts and mobile navigation.
-- Enhance reservation functionality.
-- Optimize images and overall website performance.
+Create a free PostgreSQL database with a provider such as Neon. Use its pooled connection URL as `DATABASE_URL` for the backend and run `npm run seed` from `server` with that variable set. Keep the provider's SSL parameters in the URL.
 
-## Author
+### Backend (Railway or similar)
 
-**Tesmin Maria Tom**
+- Deploy the `server` directory as a Node service.
+- Build/install command: `npm install`; start command: `npm start`.
+- Set `DATABASE_URL`, `SESSION_SECRET` (generate a unique random value), `CLIENT_ORIGIN` (the exact public frontend origin), and `NODE_ENV=production`.
+- After the first deployment, run `npm run seed` once against the production database.
 
-GitHub: [@tesmintom](https://github.com/tesmintom)
+### Frontend (Vercel or similar)
 
----
+- Deploy the repository root as a Vite project.
+- Build command: `npm run build`; output directory: `dist`.
+- Set `VITE_API_URL` to the backend base URL, then redeploy whenever it changes.
 
-*This project is developed for learning, practice, and portfolio purposes.*
+For browser sessions, serve the frontend and API on the same site when possible (for example, use a custom domain and a reverse proxy). If they use different sites, the browser may block the API's cross-site session cookie even with credentials enabled. Configure the backend's `CLIENT_ORIGIN` to the frontend origin and verify cookie behavior in the target browsers before considering deployment complete.
+
+## API and data
+
+- `GET /api/menu` returns menu categories and items from PostgreSQL as JSON.
+- Signup stores a bcrypt password hash and starts a database-backed session.
+- Login, current-session lookup, and logout use an HTTP-only session cookie stored in PostgreSQL.
+- The menu tables and user/session tables are defined in `server/src/schema.sql`.
